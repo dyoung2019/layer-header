@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+  <title>Hotkey chords</title>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <h1>Hotkey chords built on <a href="https://github.com/jaywcjlove/hotkeys">jaywcjlove/hotkeys</a></h1>
+    <!-- https://codepen.io/mikkelricky/pen/vYZrqYJ -->
+    <fieldset>
+      <legend>Chords</legend>
+
+      <p>
+        <kbd>g a</kbd>
+        <kbd>g i</kbd>
+        <kbd>g g</kbd>
+        <kbd>Ctrl+a a</kbd>
+        <kbd>Ctrl+a i</kbd>
+        <kbd>Ctrl+a g</kbd>
+      </p>
+
+      <p>Press a key followed by another within 2 seconds.</p>
+    </fieldset>
+  </div>
+
+  <script src="https://unpkg.com/hotkeys-js/dist/hotkeys.min.js"></script>
+  <script>(function () {
+      var chordScope = 'chord'
+
+      const sequence2_0 = ['a', 't', 'p', 'r', 's', 'l', 'f', 'm', 'e', 'u'];
+      // const sequence2_1 = ['a', 't', 'p', 'r', 's', 'l', 'f', 'm', 'e', 'u'];
+      // Time to complete kb shortcut
+      const duration = 400
+
+      const taskMap = {
+        'a': () => {
+          console.log('Anchor')
+        },
+        'aa': () => {
+          console.log('MaterialOptions')
+        },        
+        't': () => {
+          console.log('Opacity')
+        },   
+        'p': () => {
+          console.log('Position')
+        },   
+        'tt': () => {
+          console.log('MaskOpacity')
+        },               
+        'pp': () => {
+          console.log('PaintStrokes')
+        },
+      }
+
+      let reserve = []
+
+      let instance = null;
+      const stopSequence = (n) => {
+        const task = taskMap[reserve.join('')]
+        if (!!task)
+          task();
+
+        // } else {
+        //   console.log('error', reserve)
+        // }
+        reserve = []
+        clearTimeout(instance)
+        instance = null
+      }
+
+      hotkeys(sequence2_0.join(','), { keyup: true }, (event, handler) => {
+        if (event.type === 'keydown') {
+          return;
+        }
+        if (event.type === 'keyup' && reserve.length === 0) {
+          // console.log('sequence 0 keys')
+          reserve.push(handler.key)
+
+          let interrupt = duration
+          let sequenceLength = 2
+
+          // switch (handler.key) {
+          //   case 'a':
+          //   case 't':
+          //   case 'p':
+          //   case 'r':
+          //   case 's':
+          //   case 'l':
+          //   case 'e':
+          //   case 'u':
+          //     if (hotkeys.ctrl) {
+          //       interrupt = 500
+          //       sequenceLength = 2
+          //     } else {
+          //       return;
+          //     }
+          //     break;
+          //   case 'm':
+          //     interrupt = 250
+          //     sequenceLength = 1
+          //     break;
+          //   default:
+          //     break;
+          // }
+          instance = setTimeout(() => {
+            stopSequence(sequenceLength)
+          }, interrupt)
+          // event.preventDefault();
+        }
+      })
+
+      hotkeys(sequence2_0.join(','), { keydown: true, keyup: false }, (event, handler) => {
+        if (!!instance && reserve.length === 1) {
+          // console.log('sequence 1 keys')
+          reserve.push(handler.key)
+          // const instance = setTimeout(() => {
+          //   stopSequence(1)
+          // }, duration)
+          // event.preventDefault();
+        }
+      })
+
+      //  var chord = {
+      //      handler: null, // The hotkeys handler initiating the chord sequence
+      //      timeout: null, // The chord timeout
+      //  }
+
+      //  var resetChord = function() {
+      //      hotkeys.setScope(chordScope)
+      //      clearTimeout(chord.timeout)
+      //      chord.handler = null
+      //      chord.timeout = null
+      //  }
+
+      //  hotkeys('g, ctrl+a', chordScope, function (event, handler) {
+      //      hotkeys.setScope('g-')
+      //      chord.handler = handler
+      //      chord.timeout = setTimeout(function() {
+      //          console.log('Stop waiting for second key after '+chord.handler.key)
+      //          resetChord()
+      //      }, 2000)
+      //      console.log('You pressed '+handler.key+'. Waiting for second key i chord …')
+      //  })
+      //  hotkeys('a, i, g', 'g-', function (event, handler) {
+      //      alert('You pressed '+chord.handler.key+' followed by '+handler.key)
+      //      resetChord()
+      //  })
+
+      //  hotkeys.setScope(chordScope)
+    }())</script>
+</body>
+
+</html>
