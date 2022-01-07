@@ -41,6 +41,4 @@ export enum LayerPropertyFlags {
   AudioWaveform   = 1 << 19,      
   // SS 
   SelectedProps   = 1 << 20,
-  // MM
-  MaskPropGroups   = 1 << 21,
 }

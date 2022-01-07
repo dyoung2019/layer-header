@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  hotkeys-js: ^3.8.7
   serve: ^13.0.2
   solid-js: ^1.2.6
   typescript: ^4.5.4
@@ -8,6 +9,7 @@ specifiers:
   vite-plugin-solid: ^2.1.4
 
 dependencies:
+  hotkeys-js: 3.8.7
   serve: 13.0.2
   solid-js: 1.2.6
 
@@ -823,6 +825,10 @@ packages:
     dependencies:
       function-bind: 1.1.1
     dev: true
+
+  /hotkeys-js/3.8.7:
+    resolution: {integrity: sha512-ckAx3EkUr5XjDwjEHDorHxRO2Kb7z6Z2Sxul4MbBkN8Nho7XDslQsgMJT+CiJ5Z4TgRxxvKHEpuLE3imzqy4Lg==}
+    dev: false
 
   /html-entities/2.3.2:
     resolution: {integrity: sha512-c3Ab/url5ksaT0WyleslpBEthOzWhrjQbg75y7XUsfSzi3Dgzt0l8w5e7DylRn15MTlMMD58dTfzddNS2kcAjQ==}
