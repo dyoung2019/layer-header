@@ -1,18 +1,8 @@
-import { Accessor, createSignal } from "solid-js";
+import { createSignal } from "solid-js";
+import type { TRouteDirectory } from './useDirectory'
 
-type TMessage<TCommand> = { redo: NonNullable<TCommand>, undo: NonNullable<TCommand>, params: any }
-type TFutures<TCommand> = Array<TMessage<TCommand>>;
-
-interface UndoRedoHistory<TState, TAction, TSnapshot> {
-  current: Accessor<TState>,
-  onUndo: () => boolean;
-  onRedo: () => boolean;
-  onSend: (redo: NonNullable<TAction>, undo: NonNullable<TAction>, params?: any) => void;
-  onBulkLoad: (commands: TFutures<TAction>) => void;
-  past: Accessor<TFutures<TAction>>;
-  future: Accessor<TFutures<TAction>>;
-  stackFrames: Accessor<Array<TSnapshot|null>>;
-}
+type TMessage = { redo: NonNullable<any[]>, undo: NonNullable<any[]>, params: any }
+type TFutures = Array<TMessage>;
 
 /**
  * Builds undo / redo history
@@ -22,140 +12,154 @@ interface UndoRedoHistory<TState, TAction, TSnapshot> {
  * @param {Object[]=} deps - dependency of react hook components
  * @returns {Array.<string, number>.<string>} - array of react hook components
  */
-export default function useHistory<TState, TCommand, TSnapshot>(
-  mutator: (
-    state: TState,
-    command: NonNullable<TCommand>,
-    snapshot: TSnapshot | null
-  ) => TSnapshot | never | undefined,
-  initialState: TState
-): UndoRedoHistory<TState, TCommand, TSnapshot> {
-  type TInternalState = TState
-  // type TMessage = { redo: NonNullable<TAction>, undo: NonNullable<TAction>, params: any }
+export default function useHistory(
+  router: TRouteDirectory
+) {
+  type TApplyResult = any | null
 
-  type TApplyResult = [TInternalState, TSnapshot|null]
+  const [past, setPast] = createSignal<TFutures>([])
+  const [future, setFuture] = createSignal<TFutures>([])
+  const [stackFrames, setStackFrames] = createSignal<Array<TApplyResult>>([])
 
-  const [current, setCurrent] = createSignal(initialState);
-  const [past, setPast] = createSignal<TFutures<TCommand>>([])
-  const [future, setFuture] = createSignal<TFutures<TCommand>>([])
-  const [stackFrames, setStackFrames] = createSignal<Array<TSnapshot|null>>([])
-  // const [isBatching, setIsBatching] = useState<boolean>(true)
-
-  // Handling Other Action
-  const onBulkLoad = (commands: TFutures<TCommand>): void => {
-    setFuture([...future(), ...commands])
-  }
-
-  const queueActions = (commands: TFutures<TCommand>): void => {
-    // Clear the future & replace with single action
-    setFuture(commands)
-  }
-
-  const hasNoChangesToUndo = (): boolean => {
-    return past().length === 0
-  }
-
-  const undoAction = (action: NonNullable<TCommand>, snapshot: TSnapshot|null): TInternalState => {
-    const clonedState = { ...current() };
-    mutator(clonedState, action, snapshot)
-    return clonedState;
-  }
-
-  const updatePresentState = (action: NonNullable<TCommand>): void => {
-    const [topFrame, ...remainingFrames] = stackFrames();
-    const updatedState = undoAction(action, topFrame);
-
-    setCurrent(() => updatedState);
-    setStackFrames(remainingFrames);
-  }
-
-  const applyAction = (action: NonNullable<TCommand>): TApplyResult => {
-    const clonedState: TInternalState = { ...current() }
-    const snapshot: TSnapshot|null = mutator(clonedState, action, null) || null;
-    return [clonedState, snapshot]
-  }
-
-  const pushPresentState = (action: NonNullable<TCommand>): void => {
-    const [updatedState, snapshot] = applyAction(action);
-    setCurrent(() => updatedState);
-
-    setStackFrames([snapshot, ...stackFrames()])
+  const load = (
+    queuedCommands: TFutures,
+    appliedCommands: TFutures,
+    frames: TApplyResult[],
+  ): void => {
+    setFuture(queuedCommands);
+    setPast(appliedCommands);
+    setStackFrames(frames);
   }
 
   // Handling Undo
-  const onUndo = (): boolean => {
+  const undo = async () => {
+    const getLastChange = () => new Promise<TMessage>((resolve, reject) => {
+      const count = past().length;
+      if (count === 0) {
+        reject('has no changes to undo')
+      } else {
+        const lastIndex = count - 1;
+        resolve(past()[lastIndex]);
+      }
+    });
 
-    if (hasNoChangesToUndo()) {
-      return false
+    const getLastSnapshot = () => new Promise<TApplyResult>((resolve, reject) => {
+      if (stackFrames().length === 0) {
+        reject('has no frames to undo');
+      } else {
+        resolve(stackFrames()[0]);
+      }
+    });
+
+    const applyUndo = async (params: [msg: TMessage, snapshot: TApplyResult]) => {
+      const [msg, snapshot] = params;
+      return applyChange(msg.undo, msg.params, snapshot);
     }
 
-    const pastChanges: TFutures<TCommand> = [...past()]
-    // Remove the last element from the past.
-    const output = pastChanges.pop();
+    const dropStackFrame = () => {
+      const noOfFrames = stackFrames().length;
+      const rest = stackFrames().slice(0, noOfFrames - 1);
+      setStackFrames(rest);
+    }
 
-    if (!!output) {
-      const msg = {
-        undo: output.undo,
-        redo: output.redo,
-        params: { ...output.params }
-      };
-      updatePresentState(msg.undo);
+    const dropPastChange = () => {
+      const length = past().length;
+      const rest = past().slice(0, length - 1);
+      setPast(rest);
+    }
 
-      setPast(pastChanges);
-      // Insert the old present state at the beginning of the future.
+    const insertMessageBackInQueue = (msg: TMessage) => {
       setFuture([msg, ...future()]);
-
-      return true;
-    } else {
-      return false;
     }
+
+    let currentMessage: TMessage;
+    return Promise.all([getLastChange(), getLastSnapshot()])
+      .then((result) => {
+        currentMessage = result[0];
+        return applyUndo(result);
+      })
+      .then(dropStackFrame)
+      .then(dropPastChange)
+      .then(() => insertMessageBackInQueue(currentMessage))
+      .then(() => true);
   }
 
-  const hasNoChangesToRedo = ():boolean => {
-    return future().length === 0
-  }
-
-  const onRedo = ():boolean => {
-    if (hasNoChangesToRedo()) {
-      return false
-    }
-  
-    // Remove the first element from the future.
-    const [command, ...remainingElements] = future()
-    
+  const applyChange = async (action: NonNullable<any[]>, params: any, snapshot: TApplyResult) => {
     // Set the present to the element we removed in the previous step
-    pushPresentState(command.redo)
+    const route = router.recognize(action);
 
-    //  Insert the old present state at the end of the past.
-    setPast([...past(), command])
-    setFuture(remainingElements)
-    return true
-  }  
+    if (!route) {
+      throw new Error('redo handler missing')
+    }
 
-  const onSend = (
-    redo: NonNullable<TCommand>,
-    undo: NonNullable<TCommand>, 
+    const subPath = action[1]
+    const handler = route.handler;
+
+    if (!handler) {
+      throw new Error('redo handler missing')
+    }
+    return handler(subPath, params, snapshot);
+  }
+
+  const redo = async () => {
+    const getNextMessage = () => new Promise<TMessage>((resolve, reject) => {
+      if (future().length <= 0) {
+        reject('future command not found');
+      } else {
+        resolve(future()[0])
+      }
+    });
+
+    const applyRedo = (msg: TMessage) => {
+      return applyChange(msg.redo, msg.params, null)
+    }
+
+    const preserveSnapshot = (snapshot: any) => {
+      setStackFrames([snapshot, ...stackFrames()]);
+    }
+
+    const moveMessageOffQueue = () => {
+      const markMessageAsApplied = (msg: TMessage) => {
+        setPast([...past(), msg]);
+      }
+
+      const adjustQueue = (elements: TFutures) => {
+        //  Insert the old present state at the end of the past.
+        setFuture(elements)
+      }
+
+      const [front, ...rest] = future();
+      markMessageAsApplied(front);
+      adjustQueue(rest);
+    }
+
+    return getNextMessage()
+      .then(applyRedo)
+      .then(preserveSnapshot)
+      .then(moveMessageOffQueue)
+      .then(() => true)
+  }
+
+  const queue = (
+    redo: any[],
+    undo: any[],
     params?: any
   ): void => {
-    const msg: TMessage<TCommand> = {
+    const msg: TMessage = {
       redo,
       undo,
       params: params !== undefined ? { ...params } : {},
     }
-    // console.log(actions, params)
-    queueActions([msg]) 
+    setFuture([...future(), msg])
   }
 
   return {
-    current,
-    onUndo,
-    onRedo,
-    onSend,
-    onBulkLoad,
+    undo,
+    redo,
+    queue,
+    load,
     past,
     future,
-    // isBatching,
-    // setIsBatching,
     stackFrames
   }
 }

@@ -1,122 +1,103 @@
-import hotkeys from 'hotkeys-js';
-import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
-import { LayerPropertyFlags } from './LayerPropertyFlags';
+import { createMemo, onMount } from 'solid-js';
+import { LayerInfo } from './LayerInfo';
+import { TRouteDirectory } from './useDirectory';
+import useDoubleTap from './useDoubleTap';
 
-export default function(props: {
-    mailbox: TMailbox<string>
-  }
+
+
+export default function (props: {
+  pipeIn: TRouteDirectory,
+  pipeOut: TMailbox
+}
 ) {
-  const [seq] = createSignal(['a', 't', 'p', 'r', 's', 'l', 'f', 'm', 'e', 'u']);
-  const key = createMemo(() => seq().join(','));
-  // mailbox > history (i.e. layer view)
-  const [taskMap, setTaskMap] = createSignal<{[k: string]: () => void}>({
-    'a': () => {
-      // console.log('Anchor')s
-      props.mailbox.send('Anchor', 'Reset');
-    },
-    't': () => {
-      // console.log('Opacity')
-      props.mailbox.send('Opacity', 'Reset');
-    },   
-    'p': () => {
-      props.mailbox.send('Position', 'Reset')
-    },   
-    'r': () => {
-      props.mailbox.send('Rotation', 'Reset')
-    },   
-    's': () => {
-      props.mailbox.send('Scale', 'Reset')
-    },     
-    'l': () => {
-      props.mailbox.send('AudioLevels', 'Reset')
-    },  
-    'ff': () => {
-      props.mailbox.send('Missing Effects', 'Reset')
-    },     
-    'e': () => {
-      props.mailbox.send('Effects', 'Reset')
-    },   
-    'm': () => {
-      props.mailbox.send('Mask Path', 'Reset')
-    },
-    'u': () => {
-      props.mailbox.send('With Keyframes', 'Reset')
-    },   
-    'uu': () => {
-      props.mailbox.send('Modified Properties', 'Reset')
-    },     
-    'aa': () => {
-      props.mailbox.send('MaterialOptions', 'Reset')
-    },  
-    'tt': () => {
-      props.mailbox.send('MaskOpacity', 'Reset')
-    },               
-    'rr': () => {
-      props.mailbox.send('TimeRemap', 'Reset')
-    },  
-    'pp': () => {
-      props.mailbox.send('PaintStrokes', 'Reset')
-    },
-    'll': () => {
-      props.mailbox.send('Audio Waveform', 'Reset')
-    },   
-    'ss': () => {
-      props.mailbox.send('Selected Properties', 'Reset')
-    },     
-    'mm': () => {
-      props.mailbox.send('Mask Property Groups', 'Reset')
-    }, 
-    'ee': () => {
-      props.mailbox.send('Expressions', 'Reset')
+  const taskMap = createMemo<{ [k: string]: (layer?: LayerInfo) => void }>(() => {
+    return {
+      'a': () => {
+        props.pipeOut.send(['KB', 'Anchor'], ['KB', 'Reset']);
+      },
+      't': () => {
+        props.pipeOut.send(['KB', 'Opacity'], ['KB', 'Reset']);
+      },
+      'p': () => {
+        props.pipeOut.send(['KB', 'Position'], ['KB', 'Reset']);
+      },
+      'r': () => {
+        props.pipeOut.send(['KB', 'Rotation'], ['KB', 'Reset']);
+      },
+      's': () => {
+        props.pipeOut.send(['KB', 'Scale'], ['KB', 'Reset']);
+      },
+      'l': () => {
+        props.pipeOut.send(['KB', 'AudioLevels'], ['KB', 'Reset']);
+      },
+      'ff': () => {
+        props.pipeOut.send(['KB', 'Missing Effects'], ['KB', 'Reset']);
+      },
+      'e': () => {
+        props.pipeOut.send(['KB', 'Effects'], ['KB', 'Reset']);
+      },
+      'm': () => {
+        props.pipeOut.send(['KB', 'Mask Path'], ['KB', 'Reset']);
+      },
+      'u': () => {
+        props.pipeOut.send(['KB', 'With Keyframes'], ['KB', 'Reset']);
+      },
+      'uu': () => {
+        props.pipeOut.send(['KB', 'Modified Properties'], ['KB', 'Reset']);
+      },
+      'aa': () => {
+        props.pipeOut.send(['KB', 'MaterialOptions'], ['KB', 'Reset']);
+      },
+      'tt': () => {
+        props.pipeOut.send(['KB', 'MaskOpacity'], ['KB', 'Reset']);
+      },
+      'rr': () => {
+        props.pipeOut.send(['KB', 'TimeRemap'], ['KB', 'Reset']);
+      },
+      'pp': () => {
+        props.pipeOut.send(['KB', 'PaintStrokes'], ['KB', 'Reset']);
+      },
+      'll': () => {
+        props.pipeOut.send(['KB', 'Audio Waveform'], ['KB', 'Reset']);
+      },
+      'ss': () => {
+        props.pipeOut.send(['KB', 'Selected Properties'], ['KB', 'Reset']);
+      },
+      'mm': () => {
+        props.pipeOut.send(['KB', 'Mask Property Groups'], ['KB', 'Reset']);
+      },
+      'ee': () => {
+        props.pipeOut.send(['KB', 'Expressions'], ['KB', 'Reset']);
+      }
     }
-  })
+  });
 
-  const [buf, setBuf] = createSignal<string[]>([]);
-
-  const stopSequence = () => {
-    // console.log('reserve', buf());
-    const command: string = buf().join('')
-    const task: () => void = taskMap()[command]
+  const parseDoubleTap = (cmd: string) => {
+    const task = taskMap()[cmd]
     if (!!task) {
       task();
     }
-    setBuf([]);
+  }
+  
+  const dblTap = useDoubleTap(parseDoubleTap);
+
+  const simpleReducer = (
+    command: any,
+    params: any,
+    snapshot?: any
+  ) => {
+    switch (command) {
+      case '':
+        return;
+      default:
+        console.log('command', command);
+        return;
+    }
   }
 
-  createEffect(() => {
-    hotkeys(key(), { keyup: true }, (event, handler) => {
-      if (event.type === 'keydown') {
-        if (buf().length === 1) { 
-          setBuf([...buf(), handler.key ?? '']);
-        }
-        return;
-      }
-
-      if (event.type === 'keyup') {
-        if (buf().length === 0) {
-          setBuf([...buf(), handler.key ?? '']);
-
-          setTimeout(() => {
-            stopSequence();
-          }, 400)
-        }
-      }
-      // Prevent the default refresh event under WINDOWS system
-      event.preventDefault() 
-      // console.log(`you pressed ${handler.key}!`) 
-    });
-
-    // hotkeys(key(),  { keydown: true, keyup: false }, (event, handler) => {
-    //   if (buf().length === 1) { 
-    //     setBuf([...buf(), handler.key ?? '']);
-    //   }
-    // })
-
-    onCleanup(() => {
-      hotkeys.unbind(key())
-    })
-  })
-
+  onMount(() => {
+    props.pipeIn.add([{ path: ['KB'], handler: simpleReducer }]);
+  });
 
   return (
     <div>

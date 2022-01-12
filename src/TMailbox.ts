@@ -1,3 +1,3 @@
-interface TMailbox<TCommand> {
-  send(redo: TCommand, undo: TCommand, params?:any): void;
+interface TMailbox {
+  send(redo: string[], undo: string[], params?:any): void;
 }
