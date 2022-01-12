@@ -22,7 +22,7 @@ interface UndoRedoHistory<TState, TAction, TSnapshot> {
  * @param {Object[]=} deps - dependency of react hook components
  * @returns {Array.<string, number>.<string>} - array of react hook components
  */
-export default function useHistory<TState, TCommand, TSnapshot>(
+export default function useRedoUndo<TState, TCommand, TSnapshot>(
   mutator: (
     state: TState,
     command: NonNullable<TCommand>,
