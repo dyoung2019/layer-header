@@ -3,8 +3,6 @@ import { LayerInfo } from './LayerInfo';
 import { TRouteDirectory } from './useDirectory';
 import useDoubleTap from './useDoubleTap';
 
-
-
 export default function (props: {
   pipeIn: TRouteDirectory,
   pipeOut: TMailbox

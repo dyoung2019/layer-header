@@ -1,11 +1,13 @@
-import { createSignal, mergeProps } from "solid-js"
-import { LayerInfo } from "./LayerInfo";
+import { mergeProps } from "solid-js"
+import { LayerInfo, LayerInfoMember } from "./LayerInfo";
 import { LayerPropertyFlags } from "./LayerPropertyFlags";
 import "./LayerHeader.css";
 
-export default function(props: {
+export default function (props: {
   layer: LayerInfo,
-  isSelected: boolean
+  isSelected: boolean,
+  onClicked: () => void,
+  onValueChanged: (member: LayerInfoMember, value: any) => void
 }) {
   props = mergeProps({
     layer: {
@@ -23,8 +25,30 @@ export default function(props: {
       selectedFlags: LayerPropertyFlags.None,
       properties: [],
     },
-    isSelected: false
+    isSelected: false,
+    onValueChanged: () => { }
   }, props);
+
+  const CustomCheckbox = (
+    member: LayerInfoMember,
+    isChecked: boolean
+  ) => {
+
+    const handleChange = (e: any, m: LayerInfoMember) => {
+      const target = e.currentTarget;
+      props.onValueChanged(m, target.checked || false);
+    }
+
+    return (
+      <input className="layer-header-checkbox"
+        type="checkbox"
+        name={member}
+        id={member}
+        title={member}
+        checked={isChecked}
+        onChange={(e) => handleChange(e, member)} />
+    )
+  }
 
   const getLabelColor = () => {
     return `background-color: ${props.layer.labelColor};`
@@ -35,20 +59,18 @@ export default function(props: {
   }
 
   return (
-    <header className="layer-header">
-      <input className="layer-header-checkbox" type="checkbox" name="videoOn" id="videoOn" title="videoOn" checked={props.layer.videoOn}/>
-      <input className="layer-header-checkbox" type="checkbox" name="audioOn" id="audioOn" title="audioOn" checked={props.layer.audioOn}/>
-      <input className="layer-header-checkbox" type="checkbox" name="soloOn" id="soloOn" title="soloOn" checked={props.layer.soloOn}/>
-      <input className="layer-header-checkbox" type="checkbox" name="isLocked" id="isLocked" title="isLocked" checked={props.layer.isLocked}/> 
-      <div className="label-color-box" style={getLabelColor()}>RED</div> 
+    <header className="layer-header" onClick={props.onClicked}>
+      {CustomCheckbox("videoOn", props.layer.videoOn)}
+      {CustomCheckbox("audioOn", props.layer.audioOn)}
+      {CustomCheckbox("soloOn", props.layer.soloOn)}
+      {CustomCheckbox("isLocked", props.layer.isLocked)}
+      <div className="label-color-box" style={getLabelColor()}>-</div>
       <p style={getSelectedColor(props.isSelected)}>{props.layer.index}</p>
       <p style={getSelectedColor(props.isSelected)}>{props.layer.name}</p>
-      <input className="layer-header-checkbox" type="checkbox" name="isShy" id="isShy" title="isShy" checked={props.layer.isShy}/>  
-      <input className="layer-header-checkbox" type="checkbox" name="collapseTransforms" id="collapseTransforms" title="collapseTransforms" checked={props.layer.collapseTransforms}/>  
-      <input className="layer-header-checkbox" type="checkbox" name="frameBlending" id="frameBlending" title="frameBlending"/>  
-      <input className="layer-header-checkbox" type="checkbox" name="motionBlur" id="motionBlur" title="motionBlur"/>  
-      <input className="layer-header-checkbox" type="checkbox" name="isAdjustmentLayer" id="isAdjustmentLayer" title="isAdjustmentLayer"/>  
-      <input className="layer-header-checkbox" type="checkbox" name="is3DLayer" id="is3DLayer" title="Is 3d" checked={props.layer.is3DLayer}/>
+      {CustomCheckbox("isShy", props.layer.isShy)}
+      {CustomCheckbox("collapseTransforms", props.layer.collapseTransforms)}
+      {/* frameBlending, motionBlur, isAdjustmentLayer */}
+      {CustomCheckbox("is3DLayer", props.layer.is3DLayer)}
     </header>
   )
 }

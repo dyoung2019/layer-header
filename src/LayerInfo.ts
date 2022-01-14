@@ -18,3 +18,18 @@ export interface LayerInfo {
   selectedFlags: LayerPropertyFlags;
   properties: PropertyInfo[]; // static
 }
+
+export type LayerInfoMember =
+  "index" |
+  "name" |
+  "videoOn" |
+  "audioOn" | 
+  "soloOn" | 
+  "isLocked" |
+  "collapseTransforms" | 
+  "isShy" |
+  "is3DLayer" |
+  "labelColor" |
+  "singleFlag" |
+  "selectedFlags" |
+  "properties";

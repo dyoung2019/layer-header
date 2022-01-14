@@ -1,4 +1,4 @@
-import { Component, onMount, from, For } from 'solid-js';
+import { Component, onMount, from, For, createSignal } from 'solid-js';
 import { createStore } from 'solid-js/store'
 
 import logo from './logo.svg';
@@ -10,9 +10,12 @@ import useDirectory from './useDirectory';
 import useHistory from './useHistory';
 import { LayerPropertyFlags } from './LayerPropertyFlags';
 import Outline from './Outline';
+import { LayerInfoMember } from './LayerInfo';
+import useLayerViewBindings from './useLayerViewBindings';
+import useLayerViewReducer from './useLayerViewReducer';
 
 const App: Component = () => {
-  const [state] = createStore({
+  const [state, setState] = createStore({
     layers: [
       {
         index: 1,
@@ -62,13 +65,8 @@ const App: Component = () => {
     ]
   })
 
-  const router = useDirectory();
-  const {undo, redo, load, past, future, queue} = useHistory(router);
-
-  onMount(() => {
-    // router.add([{path: ['KB'], handler: () => console.log('HELLO')}]);
-    // load([{redo: ['KB','IN'], undo: ['KB','OUT'], params: null}], [], []);
-  })
+  const directory = useDirectory();
+  const {undo, redo, past, future, queue} = useHistory(directory);
 
   const mailbox = {
     send: (r: any[], u: any[], params?: any) => {
@@ -76,12 +74,22 @@ const App: Component = () => {
     }
   }
 
+  const [selectedId, setSelectedId] = createSignal<number>(-1)
+  const lvBindings = useLayerViewBindings(selectedId, mailbox);
+  const lvReducer = useLayerViewReducer(directory);
+
   const handleRedo = async () => {
-    await redo();
+    redo()
+      .catch(e => console.log(e));
   }
 
   const handleUndo = async () => {
-    await undo();
+    undo()
+      .catch(e => console.log(e));
+  }
+
+  const handleLayerChange = (index: number, field: LayerInfoMember, value: any) => {
+    setState('layers', index, field, value);
   }
 
   return (
@@ -96,8 +104,8 @@ const App: Component = () => {
       <For each={future()} >
         {(command) => <div>{JSON.stringify(command)}</div>}
       </For>
-      <InputDemo pipeIn={router} pipeOut={mailbox}></InputDemo>
-      <Outline layers={state.layers}></Outline>
+      <Outline selectedId={selectedId} setSelectedId={setSelectedId}
+        layers={state.layers} onLayerChange={handleLayerChange}></Outline>
     </div>
   );
 };
