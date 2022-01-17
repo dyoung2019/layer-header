@@ -1,3 +1,24 @@
+# Layer header
+
+Reverse engineering layer outline(?) controls of after effects 
+
+## TODOs 
+
+1. The Rotation property field is used for 2D layers 
+    1. On a 3D layer, Orientation and its children properties Rotation X (i.e. on X axis), Rotation Y (i.e. on Y axis) and Rotation Z (i.e. on Z axis) **are shown instead**
+    1. THEREFORE There is a dependency of 3D layer
+    1. => if (is3DLayer) ? show 4 properties else 1 property
+1.  The position property can be split into 2 separate property for a 2D layer or 3 for a 3D layer by selecting separate dimensions 
+    1. THEREFORE There is a dependency of 3D layer and a separate dimensions flag on layer
+    1. => if (is3DLayer) ? show 4 properties else 1 property    
+1.  The layer has expand all toggle which show all properties for that layer type
+    1. THEREFORE a flag for expand all is required
+
+## Ideas 
+
+using a nested set to represent properties
+https://en.wikipedia.org/wiki/Nested_set_model
+
 ## Usage
 
 Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.

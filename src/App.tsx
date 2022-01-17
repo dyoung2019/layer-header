@@ -5,6 +5,7 @@ import logo from './logo.svg';
 import styles from './App.module.css';
 import LayerHeader from './LayerHeader';
 import InputDemo from './InputDemo';
+import TreeView from './components/tree-view/index'
 
 import useDirectory from './useDirectory';
 import useHistory from './useHistory';
@@ -94,16 +95,17 @@ const App: Component = () => {
 
   return (
     <div class={styles.App}>
-      <button onClick={handleRedo}>REDO</button>
+      {/* <button onClick={handleRedo}>REDO</button>
       <button onClick={handleUndo}>UNDO</button>
-      <h4>Applied</h4>
-      <For each={past()} >
+      <h4>Applied</h4> */}
+      {/* <For each={past()} >
         {(command) => <div>{JSON.stringify(command)}</div>}
       </For>
       <h4>Queued</h4>
       <For each={future()} >
         {(command) => <div>{JSON.stringify(command)}</div>}
-      </For>
+      </For> */}
+      <TreeView></TreeView>
       <Outline selectedId={selectedId} setSelectedId={setSelectedId}
         layers={state.layers} onLayerChange={handleLayerChange}></Outline>
     </div>
