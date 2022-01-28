@@ -1,7 +1,7 @@
 import { createMemo, onMount } from 'solid-js';
-import { LayerInfo } from './LayerInfo';
-import { TRouteDirectory } from './useDirectory';
-import useDoubleTap from './useDoubleTap';
+import { LayerInfo } from '../../common/LayerInfo';
+import { TRouteDirectory } from '../../common/hooks/useDirectory';
+import useDoubleTap from '../../common/hooks/useDoubleTap';
 
 export default function (props: {
   pipeIn: TRouteDirectory,

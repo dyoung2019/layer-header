@@ -1,6 +1,6 @@
 import { mergeProps } from "solid-js"
-import { LayerInfo, LayerInfoMember } from "./LayerInfo";
-import { LayerPropertyFlags } from "./LayerPropertyFlags";
+import { LayerInfo, LayerInfoMember } from "../../common/LayerInfo";
+import { LayerPropertyFlags } from "../../common/LayerPropertyFlags";
 import "./LayerHeader.css";
 
 export default function (props: {

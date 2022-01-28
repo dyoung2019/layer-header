@@ -1,115 +1,151 @@
-import { Component, onMount, from, For, createSignal } from 'solid-js';
-import { createStore } from 'solid-js/store'
+import { createMemo, createSignal, For } from 'solid-js';
+import paging from './pageLayerProperties';
+import doSummarize from './common/hooks/doSummarize';
+import treeBuild from './common/hooks/treeBuild';
+import calculateLeafOffset from './common/hooks/calculateLeafOffset';
 
-import logo from './logo.svg';
-import styles from './App.module.css';
-import LayerHeader from './LayerHeader';
-import InputDemo from './InputDemo';
-import TreeView from './components/tree-view/index'
+export default function () {
+  const [schema] = createSignal<LayerPropertyNode[]>([
+    {
+      name: "0",
+      depth: 0,
+      maximum: 1,
+      minimum: 1,
+      queries: [1, 2]
+    }, 
+    {
+      name: "1",
+      maximum: 1,
+      depth: 1,
+      minimum: 1,
+      queries: [3, 4, 5]
+    },
+    {
+      name: "2",
+      maximum: 7,
+      depth: 1,
+      minimum: 1,
+      queries: [6, 7, 8]
+    },
+    {
+      name: "3",
+      maximum: 2,
+      depth: 2,
+      minimum: 1,     
+      queries: [] 
+    },
+    {
+      name: "4",
+      maximum: 1,
+      depth: 2,
+      minimum: 1,     
+      queries: [] 
+    },
+    {
+      name: "5",
+      maximum: 2,
+      depth: 2,
+      minimum: 1,     
+      queries: [] 
+    },
+    {
+      name: "6",
+      maximum: 5,
+      depth: 2,
+      minimum: 1,     
+      queries: [9, 10] 
+    },    
+    {
+      name: "7",
+      maximum: 3,
+      depth: 2,
+      minimum: 1,     
+      queries: [] 
+    },      
+    {
+      name: "8",
+      maximum: 5,
+      depth: 2,
+      minimum: 1,     
+      queries: [] 
+    },  
+    {
+      name: "evening gowns",
+      maximum: 2,
+      depth: 2,
+      minimum: 1,     
+      queries: [] 
+    },  
+    {
+      name: "sun dresses",
+      maximum: 2,
+      depth: 2,
+      minimum: 1,     
+      queries: [] 
+    }, 
+  ]);
 
-import useDirectory from './useDirectory';
-import useHistory from './useHistory';
-import { LayerPropertyFlags } from './LayerPropertyFlags';
-import Outline from './Outline';
-import { LayerInfoMember } from './LayerInfo';
-import useLayerViewBindings from './useLayerViewBindings';
-import useLayerViewReducer from './useLayerViewReducer';
+  const [flags] = createSignal([
+    {
+      isExpanded: true, // 0
+    },
+    {
+      isExpanded: false, // 1
+    },    
+    {
+      isExpanded: true, // 2
+    },  
+    {
+      isExpanded: false, // 3
+    }, 
+    {
+      isExpanded: false, // 4
+    },    
+    {
+      isExpanded: false, // 5
+    },
+    {
+      isExpanded: false, // 6
+    },    
+    {
+      isExpanded: false, // 7
+    },  
+    {
+      isExpanded: false, // 8
+    }, 
+    {
+      isExpanded: false, // 9
+    },    
+    {
+      isExpanded: false, // 10
+    },    
+  ])
 
-const App: Component = () => {
-  const [state, setState] = createStore({
-    layers: [
-      {
-        index: 1,
-        name: "Solid Layer 1",
-        videoOn: true,
-        audioOn: false,
-        soloOn: false,
-        isLocked: false,
-        collapseTransforms: true,
-        isShy: false,
-        is3DLayer: false,
-        labelColor: 'green',
-        singleFlag: LayerPropertyFlags.None,
-        selectedFlags: LayerPropertyFlags.None,
-        properties: [],
-      },
-      {
-        index: 2,
-        name: "Solid Layer 2",
-        videoOn: true,
-        audioOn: false,
-        soloOn: false,
-        isLocked: false,
-        collapseTransforms: true,
-        isShy: false,
-        is3DLayer: false,
-        labelColor: 'pink',
-        singleFlag: LayerPropertyFlags.None,
-        selectedFlags: LayerPropertyFlags.None,
-        properties: [],
-      },      
-      {
-        index: 3,
-        name: "Solid Layer 3",
-        videoOn: true,
-        audioOn: false,
-        soloOn: false,
-        isLocked: false,
-        collapseTransforms: true,
-        isShy: false,
-        is3DLayer: false,
-        labelColor: 'pink',
-        singleFlag: LayerPropertyFlags.None,
-        selectedFlags: LayerPropertyFlags.None,
-        properties: [],
-      }, 
-    ]
+  // const [totals] = createSignal([1]);
+  const [k] = createSignal<number>(0);
+
+  const rows = createMemo(() => {
+    const [totals, leaves] = doSummarize(schema(), flags());
+    const inputs = [1, 1, 1, 1, 3, 5]
+    const hierarchy = treeBuild(inputs, (v:any) => {
+      console.log(v)
+      return v
+    })
+    const vOffset = calculateLeafOffset(leaves.length)
+    const result =  paging(schema(), totals, k());
+    console.log('rows.totals', totals)
+    console.log('rows.leaves', leaves)
+    console.log('rows.hierarchy', hierarchy)
+    console.log('rows.vOffset', vOffset)
+    console.log('rows.result', result)
+    return result;
   })
 
-  const directory = useDirectory();
-  const {undo, redo, past, future, queue} = useHistory(directory);
-
-  const mailbox = {
-    send: (r: any[], u: any[], params?: any) => {
-      queue(r, u, params)
-    }
-  }
-
-  const [selectedId, setSelectedId] = createSignal<number>(-1)
-  const lvBindings = useLayerViewBindings(selectedId, mailbox);
-  const lvReducer = useLayerViewReducer(directory);
-
-  const handleRedo = async () => {
-    redo()
-      .catch(e => console.log(e));
-  }
-
-  const handleUndo = async () => {
-    undo()
-      .catch(e => console.log(e));
-  }
-
-  const handleLayerChange = (index: number, field: LayerInfoMember, value: any) => {
-    setState('layers', index, field, value);
-  }
-
   return (
-    <div class={styles.App}>
-      {/* <button onClick={handleRedo}>REDO</button>
-      <button onClick={handleUndo}>UNDO</button>
-      <h4>Applied</h4> */}
-      {/* <For each={past()} >
-        {(command) => <div>{JSON.stringify(command)}</div>}
+    <div>
+      <For each={rows()}>
+        {(l) => <div>{l}</div>}
       </For>
-      <h4>Queued</h4>
-      <For each={future()} >
-        {(command) => <div>{JSON.stringify(command)}</div>}
-      </For> */}
-      <TreeView></TreeView>
-      <Outline selectedId={selectedId} setSelectedId={setSelectedId}
-        layers={state.layers} onLayerChange={handleLayerChange}></Outline>
     </div>
-  );
-};
-
-export default App;
+  )
+}

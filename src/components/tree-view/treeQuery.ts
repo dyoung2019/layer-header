@@ -4,7 +4,7 @@ import isLeafNode from "./isLeafNode";
 import peekOn from "./peekOn";
 import pushChildren from "./pushChildren";
 import pushFirstMoveOn from "./pushFirstMoveOn";
-import roundToNextPowerOf2 from "./roundToNextPowerOf2";
+import roundToNextPowerOf2 from "../../common/hooks/roundToNextPowerOf2";
 import withinRange from "./withinRange";
 
 export default function treeQuery<TArray>(

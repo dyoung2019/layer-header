@@ -1,6 +1,6 @@
 import { Accessor, createSelector, createSignal, For } from "solid-js";
-import LayerHeader from "./LayerHeader";
-import { LayerInfo, LayerInfoMember } from "./LayerInfo";
+import LayerHeader from "../layer-header/LayerHeader";
+import { LayerInfo, LayerInfoMember } from "../../common/LayerInfo";
 
 export default function (props: {
   layers: LayerInfo[],
