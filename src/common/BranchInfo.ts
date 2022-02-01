@@ -1,4 +1,4 @@
-interface BranchInfo {
+export interface BranchInfo {
   total: number;
   index?: number;
 }

@@ -1,3 +1,4 @@
+import { BranchInfo } from "../../common/BranchInfo";
 import getBranchTotal from "./getBranchTotal";
 import getVTreeOffset from "./getVTreeOffset";
 import treeQuery from "./treeQuery";

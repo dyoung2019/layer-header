@@ -1,11 +1,11 @@
 import getFirstIndexOutsideTree from "./getFirstIndexOutsideTree";
-import hasMovesLeftOn from "./hasMovesLeftOn";
+import hasMovesLeftOn from "../../common/hooks/hasMovesLeftOn";
 import isLeafNode from "./isLeafNode";
-import peekOn from "./peekOn";
+import peekOn from "../../common/hooks/peekOn";
 import pushChildren from "./pushChildren";
-import pushFirstMoveOn from "./pushFirstMoveOn";
+import pushFirstMoveOn from "../../common/hooks/pushFirstMoveOn";
 import roundToNextPowerOf2 from "../../common/hooks/roundToNextPowerOf2";
-import withinRange from "./withinRange";
+import withinRange from "../../common/hooks/withinRange";
 
 export default function treeQuery<TArray>(
   tree: TArray,

@@ -8,7 +8,7 @@ import useDirectory from '../../common/hooks/useDirectory';
 import useHistory from '../../common/hooks/useHistory';
 import { LayerPropertyFlags } from '../../common/LayerPropertyFlags';
 import Outline from '../outline/Outline';
-import { LayerInfoMember } from '../../common/LayerInfo';
+import { LayerInfoMember } from '../../common/GroupLayerInfo';
 import useLayerViewBindings from '../../common/hooks/useLayerViewBindings';
 import useLayerViewReducer from '../../common/hooks/useLayerViewReducer';
 

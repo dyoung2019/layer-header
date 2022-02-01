@@ -1,9 +1,9 @@
 import { Accessor, createSelector, createSignal, For } from "solid-js";
 import LayerHeader from "../layer-header/LayerHeader";
-import { LayerInfo, LayerInfoMember } from "../../common/LayerInfo";
+import { GroupLayerInfo, LayerInfoMember } from "../../common/GroupLayerInfo";
 
 export default function (props: {
-  layers: LayerInfo[],
+  layers: GroupLayerInfo[],
   selectedId: Accessor<number>,
   setSelectedId: (i: number) => void,
   onLayerChange: (index: number, field: LayerInfoMember, value: any) => void

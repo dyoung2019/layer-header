@@ -1,10 +1,11 @@
-export default function pageLayerProperties(
-  schema: GroupPropertyNode[],
-  totals: number[],
-  k: number
+export default function queryProperties<TLeaf>(
+  branches: number[],
+  leaves: TLeaf[],
+  k: number,
+  getLeafTotal: (i: TLeaf) => number
 ) {
 
-  const size = totals.length;
+  const size = leaves.length;
   if (size === 0) {
     return [];
   }
@@ -24,19 +25,21 @@ export default function pageLayerProperties(
 
   const minimumValue = k + 1
   const withinRange = (o: number, v: number) => {
-    console.log('withinRange', minimumValue, o, v)
+    // console.log('withinRange', minimumValue, o, v)
     const kMin = minimumValue - o;
     const kMax = v;
     return kMin <= kMax
   }
 
-  const getTotal = (i: number) => {
-    // console.log('getTotal', i)
-    return totals[i];
+  const isLeafNode = (i: number): boolean => {
+    return branches.length >= i
   }
 
-  const isLeafNode = (i: number) => {
-    return schema[i].queries.length === 0
+  const getTotal = (i: number) => {
+    // console.log('getTotal', i)
+    return (isLeafNode(i))
+      ? branches.length - getLeafTotal(leaves[i])
+      : branches[i];
   }
 
   const pushQueries = (i: number, o: number)  =>  {

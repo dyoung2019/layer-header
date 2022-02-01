@@ -1,4 +1,4 @@
-interface LayerPropertyNode {
+interface GroupPropertyNode {
   name: string;
   depth: number;
   maximum: number;

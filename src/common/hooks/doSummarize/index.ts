@@ -1,13 +1,15 @@
+import { GroupPropertySchema } from "../../GroupPropertySchema";
+import { GroupPropertyState } from "../../GroupPropertyState";
 import summarize from "./summarize"
 
-type PropertyCount = [index: number, count: number];
+export type PropertyCount = [index: number, count: number];
 
 export default function doSummarize(
-  nodes: LayerPropertyNode[],
-  flags: LayerPropertyState[]
+  schema: GroupPropertySchema,
+  state: GroupPropertyState
 ): [number[], PropertyCount[]] {
   let count = 0;
-  const totals = new Array<number>(nodes.length)
+  const totals = new Array<number>(schema.groups.length)
   const storeTotal = (index: number, value: number) => {
     totals[index] = value;
     count += 1;
@@ -19,6 +21,6 @@ export default function doSummarize(
     leaves.push([index, count])
   }
 
-  summarize(totals, nodes, flags, 0, storeTotal, buildLeaves);
+  summarize(totals, schema, state, 0, storeTotal, buildLeaves);
   return [totals, leaves]
 }

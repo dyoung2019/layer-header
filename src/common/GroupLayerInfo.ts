@@ -1,7 +1,9 @@
+import { GroupPropertySchema } from "./GroupPropertySchema";
+import { GroupPropertyState } from "./GroupPropertyState";
 import { LayerPropertyFlags } from "./LayerPropertyFlags";
 import { PropertyInfo } from "./PropertyInfo";
 
-export interface LayerInfo {
+export interface GroupLayerInfo {
   // id: any;
   index: number;
   name: string;
@@ -14,9 +16,15 @@ export interface LayerInfo {
   isShy: boolean;
   is3DLayer: boolean;
   labelColor: string;
-  singleFlag: LayerPropertyFlags;
-  selectedFlags: LayerPropertyFlags;
-  properties: PropertyInfo[]; // static
+
+  // properties: PropertyInfo[];
+  // nodes: any[];
+  viz: {
+    singleFlag: LayerPropertyFlags;
+    selectedFlags: LayerPropertyFlags;
+    schema: GroupPropertySchema,
+    state: GroupPropertyState,
+  }
 }
 
 export type LayerInfoMember =
@@ -32,4 +40,5 @@ export type LayerInfoMember =
   "labelColor" |
   "singleFlag" |
   "selectedFlags" |
-  "properties";
+  // "properties" | 
+  "viz";

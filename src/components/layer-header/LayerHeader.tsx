@@ -1,10 +1,10 @@
 import { mergeProps } from "solid-js"
-import { LayerInfo, LayerInfoMember } from "../../common/LayerInfo";
+import { GroupLayerInfo, LayerInfoMember } from "../../common/GroupLayerInfo";
 import { LayerPropertyFlags } from "../../common/LayerPropertyFlags";
 import "./LayerHeader.css";
 
 export default function (props: {
-  layer: LayerInfo,
+  layer: GroupLayerInfo,
   isSelected: boolean,
   onClicked: () => void,
   onValueChanged: (member: LayerInfoMember, value: any) => void

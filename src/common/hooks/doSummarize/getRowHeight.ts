@@ -1,3 +1,3 @@
-export default function evaluateCost(n: LayerPropertyNode): number {
+export default function evaluateCost(n: GroupPropertyNode): number {
   return n.maximum
 }
