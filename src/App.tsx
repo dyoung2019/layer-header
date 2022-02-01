@@ -1,4 +1,4 @@
-import { createMemo, createSignal, For } from 'solid-js';
+import { createMemo, createSignal, For, Show, Switch } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { GroupPropertySchema } from './common/GroupPropertySchema';
 import { LayerPropertyFlags } from './common/LayerPropertyFlags';
@@ -286,11 +286,41 @@ export default function () {
     return records;
   })
 
+  const [dims, setDims] = createSignal(2)
+
+  const handleDims = () => {
+    setDims(dims() === 2 ? 3 : 2)
+  }
+
+  const [repo, setRepo] = createStore({
+    slots: [
+      false,
+      false,
+      true
+    ]
+  })
+
   return (
     <div>
-      <For each={rows()}>
+      {/* <For each={rows()}>
         {(l) => <div>{l}</div>}
+      </For> */}
+      <button onClick={handleDims}>{dims()}D Layer </button>
+
+      <For each={repo.slots}>
+        {
+          (s,i) => <div>
+            <input id={"slot" + i} type="checkbox" checked={s} onChange={() => setRepo('slots', i(), !s)}></input>
+            <label for="i">slot{i} - {'xyz'.slice(0, dims())}</label>
+            <Show when={s}>
+              <For each={'xyz'.slice(0, dims()).split('')}>
+                {l => <div>Pos {l}</div>}
+              </For>
+            </Show>
+          </div>
+        }
       </For>
+
     </div>
   )
 }
