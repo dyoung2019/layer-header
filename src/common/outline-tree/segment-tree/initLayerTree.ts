@@ -1,4 +1,4 @@
-import { BranchInfo } from "./common/BranchInfo";
+import { BranchInfo } from "../../BranchInfo";
 import { SegmentTree } from "./SegmentTree";
 
 const getLayerCount = (b: BranchInfo): number => {

@@ -1,4 +1,4 @@
-import { LayerPropertyFlags } from "./LayerPropertyFlags";
+import { LayerPropertyFlags } from "./outline-tree/LayerPropertyFlags";
 
 const ParentLayer = 
 // Transform: properties

@@ -1,3 +1,0 @@
-interface LayerPropertyState {
-  isExpanded: boolean;
-}

@@ -2,6 +2,20 @@
 
 Reverse engineering layer outline(?) controls of after effects 
 
+## Approach 
+Outline paging solution
+2 level segment  
+1. Top level Array-based segment tree (0-based) of the layer with total count of visible properties (as total height)
+2. Secondary level of each property and their height
+
+Since layers is various types with the same number of props 
+
+
+With per-property state controlling 
+- is-expanded
+- separate-dimensions 
+
+
 ## TODOs 
 
 1. The Rotation property field is used for 2D layers 
@@ -13,6 +27,7 @@ Reverse engineering layer outline(?) controls of after effects
     1. => if (is3DLayer) ? show 4 properties else 1 property    
 1.  The layer has expand all toggle which show all properties for that layer type
     1. THEREFORE a flag for expand all is required
+1. Regional context for property names
 
 ## Ideas 
 

@@ -1,7 +1,7 @@
-import getLeftNode from "./common/hooks/getLeftNode";
-import getRightNode from "./common/hooks/getRightNode";
-import pushLeftMove from "./common/hooks/pushLeftMove";
-import pushRightMove from "./common/hooks/pushRightMove";
+import getLeftNode from "../../getLeftNode";
+import getRightNode from "../../getRightNode";
+import pushLeftMove from "../../pushLeftMove";
+import pushRightMove from "../../pushRightMove";
 import type { SegmentTree } from "./SegmentTree";
 // import TreeStack from "./TreeStack";
 

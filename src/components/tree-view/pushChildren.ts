@@ -1,7 +1,7 @@
-import getLeftNode from "../../common/hooks/getLeftNode";
-import getRightNode from "../../common/hooks/getRightNode";
-import pushLeftMove from "../../common/hooks/pushLeftMove";
-import pushRightMove from "../../common/hooks/pushRightMove";
+import getLeftNode from "../../common/getLeftNode";
+import getRightNode from "../../common/getRightNode";
+import pushLeftMove from "../../common/pushLeftMove";
+import pushRightMove from "../../common/pushRightMove";
 
 export default function pushChildren<TSegment>(
   stack: any[], 

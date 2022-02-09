@@ -1,10 +1,10 @@
 import { mergeProps } from "solid-js"
-import { GroupLayerInfo, LayerInfoMember } from "../../common/GroupLayerInfo";
-import { LayerPropertyFlags } from "../../common/LayerPropertyFlags";
+import { LayerGroupInfo, LayerInfoMember } from "../../common/outline-tree/LayerGroupInfo";
+import { LayerPropertyFlags } from "../../common/outline-tree/LayerPropertyFlags";
 import "./LayerHeader.css";
 
 export default function (props: {
-  layer: GroupLayerInfo,
+  layer: LayerGroupInfo,
   isSelected: boolean,
   onClicked: () => void,
   onValueChanged: (member: LayerInfoMember, value: any) => void
@@ -60,17 +60,17 @@ export default function (props: {
 
   return (
     <header className="layer-header" onClick={props.onClicked}>
-      {CustomCheckbox("videoOn", props.layer.videoOn)}
-      {CustomCheckbox("audioOn", props.layer.audioOn)}
-      {CustomCheckbox("soloOn", props.layer.soloOn)}
-      {CustomCheckbox("isLocked", props.layer.isLocked)}
+      {CustomCheckbox("videoOn", props.layer.videoOn)}<span>Video On?</span>
+      {CustomCheckbox("audioOn", props.layer.audioOn)}<span>Audio On?</span>
+      {CustomCheckbox("soloOn", props.layer.soloOn)}<span>Solo On?</span>
+      {CustomCheckbox("isLocked", props.layer.isLocked)}<span>Is Locked?</span>
       <div className="label-color-box" style={getLabelColor()}>-</div>
       <p style={getSelectedColor(props.isSelected)}>{props.layer.index}</p>
-      <p style={getSelectedColor(props.isSelected)}>{props.layer.name}</p>
-      {CustomCheckbox("isShy", props.layer.isShy)}
-      {CustomCheckbox("collapseTransforms", props.layer.collapseTransforms)}
+      <p style={getSelectedColor(props.isSelected)}>{props.layer.name} {props.layer.is3DLayer ? '3D' : '2D'}</p>
+      {CustomCheckbox("isShy", props.layer.isShy)}<span>Is Shy?</span>
+      {CustomCheckbox("collapseTransforms", props.layer.collapseTransforms)}<span>Collapse Transforms?</span>
       {/* frameBlending, motionBlur, isAdjustmentLayer */}
-      {CustomCheckbox("is3DLayer", props.layer.is3DLayer)}
+      {CustomCheckbox("is3DLayer", props.layer.is3DLayer)}<span>Is 3D Layer?</span>
     </header>
   )
 }

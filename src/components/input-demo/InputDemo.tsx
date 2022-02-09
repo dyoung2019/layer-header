@@ -1,5 +1,5 @@
 import { createMemo, onMount } from 'solid-js';
-import { GroupLayerInfo } from '../../common/GroupLayerInfo';
+import { LayerGroupInfo } from '../../common/outline-tree/LayerGroupInfo';
 import { TRouteDirectory } from '../../common/hooks/useDirectory';
 import useDoubleTap from '../../common/hooks/useDoubleTap';
 
@@ -8,7 +8,7 @@ export default function (props: {
   pipeOut: TMailbox
 }
 ) {
-  const taskMap = createMemo<{ [k: string]: (layer?: GroupLayerInfo) => void }>(() => {
+  const taskMap = createMemo<{ [k: string]: (layer?: LayerGroupInfo) => void }>(() => {
     return {
       'a': () => {
         props.pipeOut.send(['KB', 'Anchor'], ['KB', 'Reset']);

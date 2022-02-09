@@ -1,26 +1,16 @@
-// import getBranchTotal from "./getBranchTotal";
-// import getVTreeOffset from "./getVTreeOffset";
-// import treeQuery from "./treeQuery";
-
-import { BranchInfo } from "./common/BranchInfo";
-import { GroupLayerInfo } from "./common/GroupLayerInfo";
-import { PropertyCount } from "./common/hooks/doSummarize";
-import fetchRows from "./components/tree-view/fetchRows";
-import { LayerProps } from "./LayerProps";
-import memberQuery from "./memberQuery";
-import { SegmentTree } from "./SegmentTree";
-
-type OutlineTree = SegmentTree<LayerProps>;
-type PropertyTree = SegmentTree<PropertyCount>;
+import { LayerGroupInfo } from "./common/outline-tree/LayerGroupInfo";
+import { LayerProps } from "./common/outline-tree/LayerProps";
+import memberQuery from "./common/outline-tree/memberQuery";
+import { OutlineTree } from "./common/outline-tree/OutlineTree";
 
 function getTreeOffset(info: LayerProps, k: number): number {
   const query = memberQuery(info.props, k);
-  return (!!query) ? info.props.getLeaf(query[0]) : 0;
+  return (!!query) ? info.props.getLeafIndex(query[0]) : 0;
 }
 
 export default function fetchRecords(
   outline: OutlineTree,
-  layers: GroupLayerInfo[],
+  layers: LayerGroupInfo[],
   // size: number,
   rowIndex: number,
   rowHeight: number
@@ -34,13 +24,14 @@ export default function fetchRecords(
   // console.log('topLevel', topLevel)
   const [layerPosition, k] = topLevel;
 
-  const isEndOfRecords = () => {
-    return (layerPosition === -1 || outline.getOutsideIndex() === layerPosition);
-  }
+  // const isEndOfRecords = () => {
+  //   return (layerPosition === -1 || outline.getOutsideIndex() === layerPosition);
+  // }
 
-  if (isEndOfRecords()) {
-    return [];
-  }
+  // if (isEndOfRecords()) {
+  //   console.log('isEndOfRecords')
+  //   return [];
+  // }
 
   // const info = outline.getLeafByIndex(layerPosition)
   // console.log('info', info)
@@ -75,7 +66,7 @@ export default function fetchRecords(
   if (layerPosition !== -1) {
     let count = 0;
 
-    let li = outline.getLeaf(layerPosition);
+    let li = outline.getLeafIndex(layerPosition);
 
     let first = true;
     const segmentSize = outline.leaves.length;
@@ -125,7 +116,15 @@ export default function fetchRecords(
           //   const propIndex = j - layer.vtreeOffset;
 
           for (let lsi = 0; lsi < propCount && drawn < diff; lsi += 1) {
-            const prop = `${"=".repeat(group.depth * 2)}${group.depth === 0 ? `[${layer.name}]` : ''} Prop ${propIndex}.${lsi} - (${lp})`;
+            const prop = {
+              layerIndex: layerIndex,
+              layerOrdinal: li,
+              depth: group.depth,
+              // name: layer.name,
+              propIndex,
+              subIndex: lsi,
+            };
+            //`${"=".repeat(group.depth * 2)}${group.depth === 0 ? `[${layer.name}]` : ''} Prop ${propIndex}.${lsi} - (${lp})`;
             // console.log('p', prop)
             output.push(prop);
             drawn += 1
@@ -138,7 +137,7 @@ export default function fetchRecords(
       li += 1;
     }
   }
-  console.log('done')
+  // console.log('done')
   // const output: any[] = [];
   // for (let i = rowIndex; i < rowIndex + rowHeight; i += 1) {
   //   output.push(i);

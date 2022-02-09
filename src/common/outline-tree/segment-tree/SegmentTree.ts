@@ -1,4 +1,4 @@
-import treeBuild from "./common/hooks/treeBuild";
+import treeBuild from "../../treeBuild";
 
 export class SegmentTree<TItem> {
   public branches: number[];
@@ -25,19 +25,19 @@ export class SegmentTree<TItem> {
     return this.branches.length;
   }
 
-  public getLeaf(index: number) {
+  public getLeafIndex(index: number) {
     return index - this.branches.length;
   }
 
-  public getLeafByIndex = (index: number) => {
+  public getLeaf = (index: number) => {
     return this.isLeafNode(index)
-      ? this.leaves[this.getLeaf(index)]
+      ? this.leaves[this.getLeafIndex(index)]
       : null;
   }
 
   public getNodeCount = (index: number): number =>  {
     return this.isLeafNode(index)
-    ? this.getLeafCount(this.leaves[this.getLeaf(index)])
+    ? this.getLeafCount(this.leaves[this.getLeafIndex(index)])
     : this.branches[index];
   }
 

@@ -1,6 +1,6 @@
-import peekOn from "./common/hooks/peekOn";
-import pushLeftMove from "./common/hooks/pushLeftMove";
-import pushRightMove from "./common/hooks/pushRightMove";
+import peekOn from "./common/peekOn";
+import pushLeftMove from "./common/pushLeftMove";
+import pushRightMove from "./common/pushRightMove";
 
 type TreeFrame = [index: number, offset: number];
 

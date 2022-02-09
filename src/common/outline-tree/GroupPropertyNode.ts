@@ -1,4 +1,4 @@
-interface GroupPropertyNode {
+export interface GroupPropertyNode {
   name: string;
   depth: number;
   maximum: number;

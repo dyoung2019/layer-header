@@ -1,9 +1,9 @@
-import hasMovesLeftOn from "./common/hooks/hasMovesLeftOn";
-import peekOn from "./common/hooks/peekOn";
-import pushFirstMoveOn from "./common/hooks/pushFirstMoveOn";
-import withinRange from "./common/hooks/withinRange";
-import { queueMember } from "./queueMember";
-import type { SegmentTree } from "./SegmentTree";
+import hasMovesLeftOn from "../hasMovesLeftOn";
+import peekOn from "../peekOn";
+import pushFirstMoveOn from "../pushFirstMoveOn";
+import withinRange from "../hooks/withinRange";
+import { queueMember } from "./segment-tree/queueMember";
+import type { SegmentTree } from "./segment-tree/SegmentTree";
 
 const getSubIndex = (minimumValue: number, offset: number) => {
   return minimumValue - offset - 1;

@@ -1,25 +1,29 @@
-import { GroupLayerInfo } from "./common/GroupLayerInfo";
-import doSummarize, { PropertyCount } from "./common/hooks/doSummarize";
+import { LayerGroupInfo } from "./LayerGroupInfo";
+import doSummarize from "./doSummarize";
 import initMembers from "./initMembers";
 import { LayerProps } from "./LayerProps";
 import { LayerReference } from "./LayerReference";
-import { SegmentTree } from "./SegmentTree";
+import { SegmentTree } from "./segment-tree/SegmentTree";
+import type { OutlineTree } from "./OutlineTree";
 
 export default function initOutlineTree(
-  layers: GroupLayerInfo[], 
-  inputs: LayerReference[]
-) {
+  groups: LayerGroupInfo[], 
+  references: LayerReference[]
+): OutlineTree {
   // initialises all layer props count
-  const states = inputs.map(input => {
-    const layer = layers[input.index]
+  const states = references.map(input => {
+    const layer = groups[input.index]
     const [, leaves] = doSummarize(layer.viz.schema, layer.viz.state);
+    // console.log('leaves', leaves)
     const props = initMembers();
     props.fill(leaves);
+    // console.log('props', props)
     return {
       index: input.index,
       props
     };
   })
+  // console.log('states', states)
 
   const view = new SegmentTree<LayerProps>((a) => {
     return (!!a && a.props.branches.length > 0)

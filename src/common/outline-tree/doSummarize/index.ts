@@ -1,5 +1,5 @@
-import { GroupPropertySchema } from "../../GroupPropertySchema";
-import { GroupPropertyState } from "../../GroupPropertyState";
+import { GroupPropertySchema } from "../GroupPropertySchema";
+import { GroupPropertyState } from "../GroupPropertyState";
 import summarize from "./summarize"
 
 export type PropertyCount = [index: number, count: number];

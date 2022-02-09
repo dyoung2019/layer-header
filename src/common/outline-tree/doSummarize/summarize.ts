@@ -1,5 +1,6 @@
-import { GroupPropertySchema } from "../../GroupPropertySchema";
-import { GroupPropertyState } from "../../GroupPropertyState";
+import { GroupPropertySchema } from "../GroupPropertySchema";
+import { GroupPropertyState } from "../GroupPropertyState";
+import { GroupPropertyNode } from "../GroupPropertyNode";
 import getRowHeight from "./getRowHeight";
 
 const hasChildren = (node: GroupPropertyNode): boolean => {

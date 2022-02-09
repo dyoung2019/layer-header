@@ -6,11 +6,12 @@ import TreeView from '../tree-view/index'
 
 import useDirectory from '../../common/hooks/useDirectory';
 import useHistory from '../../common/hooks/useHistory';
-import { LayerPropertyFlags } from '../../common/LayerPropertyFlags';
+import { LayerPropertyFlags } from '../../common/outline-tree/LayerPropertyFlags';
 import Outline from '../outline/Outline';
-import { LayerInfoMember } from '../../common/GroupLayerInfo';
+import type { LayerGroupInfo } from '../../common/outline-tree/LayerGroupInfo';
 import useLayerViewBindings from '../../common/hooks/useLayerViewBindings';
 import useLayerViewReducer from '../../common/hooks/useLayerViewReducer';
+import { LayerPropertyKeys } from '../../common/outline-tree/LayerPropertyKeys';
 
 export default function() {
   const [state, setState] = createStore({
@@ -26,9 +27,10 @@ export default function() {
         isShy: false,
         is3DLayer: false,
         labelColor: 'green',
-        singleFlag: LayerPropertyFlags.None,
-        selectedFlags: LayerPropertyFlags.None,
-        properties: [],
+        // singleFlag: LayerPropertyFlags.None,
+        // selectedFlags: LayerPropertyFlags.None,
+        // properties: [],
+        viz: {}
       },
       {
         index: 2,
@@ -41,9 +43,10 @@ export default function() {
         isShy: false,
         is3DLayer: false,
         labelColor: 'pink',
-        singleFlag: LayerPropertyFlags.None,
-        selectedFlags: LayerPropertyFlags.None,
-        properties: [],
+        // singleFlag: LayerPropertyFlags.None,
+        // selectedFlags: LayerPropertyFlags.None,
+        // properties: [],
+        viz: {}
       },      
       {
         index: 3,
@@ -56,9 +59,10 @@ export default function() {
         isShy: false,
         is3DLayer: false,
         labelColor: 'pink',
-        singleFlag: LayerPropertyFlags.None,
-        selectedFlags: LayerPropertyFlags.None,
-        properties: [],
+        // singleFlag: LayerPropertyFlags.None,
+        // selectedFlags: LayerPropertyFlags.None,
+        // properties: [],
+        viz: {}
       }, 
     ]
   })
@@ -86,7 +90,7 @@ export default function() {
       .catch(e => console.log(e));
   }
 
-  const handleLayerChange = (index: number, field: LayerInfoMember, value: any) => {
+  const handleLayerChange = (index: number, field: LayerPropertyKeys, value: any) => {
     setState('layers', index, field, value);
   }
 
