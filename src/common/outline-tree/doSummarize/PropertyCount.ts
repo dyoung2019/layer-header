@@ -1,0 +1,1 @@
+export type PropertyCount = [index: number, count: number];

@@ -1,7 +1,7 @@
-import { LayerGroupInfo } from "./common/outline-tree/LayerGroupInfo";
-import { LayerProps } from "./common/outline-tree/LayerProps";
-import memberQuery from "./common/outline-tree/memberQuery";
-import { OutlineTree } from "./common/outline-tree/OutlineTree";
+import { LayerGroupInfo } from "./LayerGroupInfo";
+import { LayerProps } from "./LayerProps";
+import memberQuery from "./memberQuery";
+import { OutlineTree } from "./OutlineTree";
 
 function getTreeOffset(info: LayerProps, k: number): number {
   const query = memberQuery(info.props, k);

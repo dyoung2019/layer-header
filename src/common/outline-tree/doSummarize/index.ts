@@ -1,8 +1,7 @@
 import { GroupPropertySchema } from "../GroupPropertySchema";
 import { GroupPropertyState } from "../GroupPropertyState";
+import { PropertyCount } from "./PropertyCount";
 import summarize from "./summarize"
-
-export type PropertyCount = [index: number, count: number];
 
 export default function doSummarize(
   schema: GroupPropertySchema,

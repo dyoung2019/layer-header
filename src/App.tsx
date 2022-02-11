@@ -4,7 +4,7 @@ import { LayerGroupInfo } from './common/outline-tree/LayerGroupInfo';
 import { GroupPropertySchema } from './common/outline-tree/GroupPropertySchema';
 import { LayerPropertyFlags } from './common/outline-tree/LayerPropertyFlags';
 import Outline from './components/outline/Outline';
-import fetchRecords from './fetchRecords';
+import fetchRecords from './common/outline-tree/fetchRecords';
 import initOutlineTree from './common/outline-tree/initOutlineTree';
 import { LayerReference } from './common/outline-tree/LayerReference';
 import { SegmentTree } from './common/outline-tree/segment-tree/SegmentTree';
