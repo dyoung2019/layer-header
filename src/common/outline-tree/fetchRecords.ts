@@ -2,6 +2,7 @@ import { LayerGroupInfo } from "./LayerGroupInfo";
 import { LayerProps } from "./LayerProps";
 import memberQuery from "./memberQuery";
 import { OutlineTree } from "./OutlineTree";
+import PropertyRecord from "./PropertyRecord";
 
 function getTreeOffset(info: LayerProps, k: number): number {
   const query = memberQuery(info.props, k);
@@ -14,7 +15,7 @@ export default function fetchRecords(
   // size: number,
   rowIndex: number,
   rowHeight: number
-) {
+): PropertyRecord[] {
   // top-level query on layers first
   const topLevel = memberQuery(outline, rowIndex);
 
@@ -51,7 +52,7 @@ export default function fetchRecords(
 
   // console.log('query', query)
 
-  const output: any[] = []
+  const output: PropertyRecord[] = []
   // // // console.log('answer', answer)
   // const [index, offset] = query
 
@@ -116,11 +117,12 @@ export default function fetchRecords(
           //   const propIndex = j - layer.vtreeOffset;
 
           for (let lsi = 0; lsi < propCount && drawn < diff; lsi += 1) {
-            const prop = {
+            const prop: PropertyRecord = {
               layerIndex: layerIndex,
               layerOrdinal: li,
               depth: group.depth,
               // name: layer.name,
+              group: group.name,
               propIndex,
               subIndex: lsi,
             };

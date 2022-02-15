@@ -1,4 +1,5 @@
-import type { PropertyCount } from "./doSummarize";
+
+import { PropertyCount } from "./doSummarize/PropertyCount";
 import { SegmentTree } from "./segment-tree/SegmentTree";
 
 export default function initMembers() {

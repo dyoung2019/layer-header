@@ -2,9 +2,10 @@ import { Accessor, createSelector, createSignal, For, Match, Show, Switch } from
 import LayerHeader from "../layer-header/LayerHeader";
 import { LayerGroupInfo } from "../../common/outline-tree/LayerGroupInfo";
 import { LayerPropertyKeys } from "../../common/outline-tree/LayerPropertyKeys";
+import PropertyRecord from "../../common/outline-tree/PropertyRecord";
 
 export default function (props: {
-  rows: any[],
+  rows: PropertyRecord[],
   layers: LayerGroupInfo[],
   selectedId: Accessor<number>,
   setSelectedId: (i: number) => void,

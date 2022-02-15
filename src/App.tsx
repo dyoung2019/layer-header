@@ -1,4 +1,4 @@
-import { createMemo, createSignal, For, onMount, Show, Switch } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, onMount, Show, Switch } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { LayerGroupInfo } from './common/outline-tree/LayerGroupInfo';
 import { GroupPropertySchema } from './common/outline-tree/GroupPropertySchema';
@@ -10,12 +10,16 @@ import { LayerReference } from './common/outline-tree/LayerReference';
 import { SegmentTree } from './common/outline-tree/segment-tree/SegmentTree';
 import treeUpdate from './common/treeUpdate/treeUpdate';
 import { LayerPropertyKeys } from './common/outline-tree/LayerPropertyKeys';
+import { RowType } from './common/outline-tree/RowType';
+import PropertyRecord from './common/outline-tree/PropertyRecord';
+import { OutlineTree } from './common/outline-tree/OutlineTree';
 
 export default function () {
   const [schema] = createSignal<GroupPropertySchema>({
     groups: [
       {
         name: "0",
+        type: RowType.Branch,
         depth: 0,
         maximum: 1,
         minimum: 1,
@@ -23,6 +27,7 @@ export default function () {
       },
       {
         name: "1",
+        type: RowType.Branch,
         maximum: 1,
         depth: 1,
         minimum: 1,
@@ -30,6 +35,7 @@ export default function () {
       },
       {
         name: "2",
+        type: RowType.Branch,
         maximum: 7,
         depth: 1,
         minimum: 1,
@@ -37,6 +43,7 @@ export default function () {
       },
       {
         name: "3",
+        type: RowType.Position,
         maximum: 2,
         depth: 2,
         minimum: 1,
@@ -44,6 +51,7 @@ export default function () {
       },
       {
         name: "4",
+        type: RowType.Rotation,
         maximum: 1,
         depth: 2,
         minimum: 1,
@@ -51,6 +59,7 @@ export default function () {
       },
       {
         name: "5",
+        type: RowType.Scale,
         maximum: 2,
         depth: 2,
         minimum: 1,
@@ -58,6 +67,7 @@ export default function () {
       },
       {
         name: "6",
+        type: RowType.Branch,
         maximum: 5,
         depth: 2,
         minimum: 1,
@@ -65,6 +75,7 @@ export default function () {
       },
       {
         name: "7",
+        type: RowType.Skew,
         maximum: 3,
         depth: 2,
         minimum: 1,
@@ -72,6 +83,7 @@ export default function () {
       },
       {
         name: "8",
+        type: RowType.Position,
         maximum: 5,
         depth: 2,
         minimum: 1,
@@ -79,6 +91,7 @@ export default function () {
       },
       {
         name: "evening gowns",
+        type: RowType.Position,
         maximum: 2,
         depth: 2,
         minimum: 1,
@@ -86,6 +99,7 @@ export default function () {
       },
       {
         name: "sun dresses",
+        type: RowType.Anchor,
         maximum: 2,
         depth: 2,
         minimum: 1,
@@ -279,7 +293,7 @@ export default function () {
         isLocked: false,
         collapseTransforms: true,
         isShy: false,
-        is3DLayer: false,
+        is3DLayer: true,
         labelColor: 'pink',
         viz: {
           singleFlag: LayerPropertyFlags.None,
@@ -288,6 +302,7 @@ export default function () {
             groups: [
               {
                 name: "header",
+                type: RowType.Branch,
                 depth: 0,
                 maximum: 1,
                 minimum: 1,
@@ -295,6 +310,7 @@ export default function () {
               },
               {
                 name: "transform",
+                type: RowType.Branch,
                 depth: 1,
                 maximum: 3,
                 minimum: 1,
@@ -302,6 +318,7 @@ export default function () {
               },   
               {
                 name: "position",
+                type: RowType.Position,
                 depth: 2,
                 maximum: 3,
                 minimum: 1,
@@ -309,6 +326,7 @@ export default function () {
               },
               {
                 name: "rotation",
+                type: RowType.Rotation,
                 depth: 2,
                 maximum: 3,
                 minimum: 1,
@@ -316,6 +334,7 @@ export default function () {
               },
               {
                 name: "scale",
+                type: RowType.Scale,
                 depth: 2,
                 maximum: 1,
                 minimum: 1,
@@ -334,15 +353,15 @@ export default function () {
                 separate: false,
               },
               {
-                isExpanded: false, // 2
+                isExpanded: true, // 2
+                separate: true,
+              },
+              {
+                isExpanded: true, // 3
                 separate: false,
               },
               {
-                isExpanded: false, // 3
-                separate: false,
-              },
-              {
-                isExpanded: false, // 4
+                isExpanded: true, // 4
                 separate: false,
               },
             ]
@@ -352,85 +371,85 @@ export default function () {
     ],
   })
 
-  onMount(() => {
-    const states = [1, 2, 2, 4, 3]
-    const view = new SegmentTree<number>((a:number) => a);
-    view.fill(states);
+  // onMount(() => {
+  //   const states = [1, 2, 2, 4, 3]
+  //   const view = new SegmentTree<number>((a:number) => a);
+  //   view.fill(states);
 
-    console.log('view.branches', view.branches);
-    console.log('view.leaves', view.leaves);
+  //   console.log('view.branches', view.branches);
+  //   console.log('view.leaves', view.leaves);
 
-    const getParent = (i: number) => {
-      return ((i + 1) >> 1) - 1;
-    } 
+  //   const getParent = (i: number) => {
+  //     return ((i + 1) >> 1) - 1;
+  //   } 
 
-    const toTreeIndex = (i: number) => {
-      return view.branches.length + i;
-    }
+  //   const toTreeIndex = (i: number) => {
+  //     return view.branches.length + i;
+  //   }
 
-    const getLeftChild = (p: number) => {
-      return ((p + 1) << 1) - 1;
-    }
+  //   const getLeftChild = (p: number) => {
+  //     return ((p + 1) << 1) - 1;
+  //   }
 
-    const ceiling = view.branches.length + view.leaves.length;
-    const getNodeValue = (i: number) => {
-      return (i <= ceiling) 
-          ? view.getNodeCount(i)
-          : 0;
-    }
+  //   const ceiling = view.branches.length + view.leaves.length;
+  //   const getNodeValue = (i: number) => {
+  //     return (i <= ceiling) 
+  //         ? view.getNodeCount(i)
+  //         : 0;
+  //   }
 
-    const setNodeValue = (i: number, value: number) => {
-      const noOfBranches = view.branches.length;
-      if (i < noOfBranches) {
-        view.branches[i] = value;
-      } else {
-        view.leaves[i - noOfBranches] = value;
-      }
-    }
+  //   const setNodeValue = (i: number, value: number) => {
+  //     const noOfBranches = view.branches.length;
+  //     if (i < noOfBranches) {
+  //       view.branches[i] = value;
+  //     } else {
+  //       view.leaves[i - noOfBranches] = value;
+  //     }
+  //   }
 
-    const pickUpdate = (i: number, value: number) => {
-      const output: Record<number, number> = {};
-      output[toTreeIndex(i)] = value;
+  //   const pickUpdate = (i: number, value: number) => {
+  //     const output: Record<number, number> = {};
+  //     output[toTreeIndex(i)] = value;
 
-      // leaf index -> tree index
-      let lastValue = value
-      let current = toTreeIndex(i);
-      do {
-        const parent = getParent(current);
-        // const oldCount = view.getNodeCount(parent);
-        const left = getLeftChild(parent);
-        const right = left + 1;
-        // const lastChild = lastValue;
+  //     // leaf index -> tree index
+  //     let lastValue = value
+  //     let current = toTreeIndex(i);
+  //     do {
+  //       const parent = getParent(current);
+  //       // const oldCount = view.getNodeCount(parent);
+  //       const left = getLeftChild(parent);
+  //       const right = left + 1;
+  //       // const lastChild = lastValue;
 
-        const leftMatched: boolean = left === current;
-        const leftValue: number = leftMatched
-            ? lastValue
-            : getNodeValue(left);
-        const rightValue: number = leftMatched
-            ? getNodeValue(right)
-            : lastValue;
+  //       const leftMatched: boolean = left === current;
+  //       const leftValue: number = leftMatched
+  //           ? lastValue
+  //           : getNodeValue(left);
+  //       const rightValue: number = leftMatched
+  //           ? getNodeValue(right)
+  //           : lastValue;
 
-        const newCount = leftValue + rightValue;
-        lastValue = newCount;
+  //       const newCount = leftValue + rightValue;
+  //       lastValue = newCount;
 
-        output[parent] = newCount;
-        // console.log('update', parent, newCount);
-        // setNodeValue(parent, newCount);
-        current = parent;
-      } while (current > 0);
-      // divide by 2
-      return output;
-    }
+  //       output[parent] = newCount;
+  //       // console.log('update', parent, newCount);
+  //       // setNodeValue(parent, newCount);
+  //       current = parent;
+  //     } while (current > 0);
+  //     // divide by 2
+  //     return output;
+  //   }
 
-    const leafValue = 0;
-    const leafIndex = 2;
+  //   const leafValue = 0;
+  //   const leafIndex = 2;
 
-    const module = treeUpdate(view, leafIndex, leafValue);
-    const original = pickUpdate(leafIndex, leafValue);
-    console.log('module', module);
-    console.log('original', original);
-    // console.log('view.leaves', view.leaves);
-  })
+  //   const module = treeUpdate(view, leafIndex, leafValue);
+  //   const original = pickUpdate(leafIndex, leafValue);
+  //   console.log('module', module);
+  //   console.log('original', original);
+  //   // console.log('view.leaves', view.leaves);
+  // })
 
   const [inputs] = createSignal<LayerReference[]>([
     // { index: 2, },
@@ -438,15 +457,27 @@ export default function () {
     // { index: 1, },
   ]);
 
-  const outline = createMemo(() => initOutlineTree(repo.layers, inputs()) );
-
-  const rows = createMemo(() => fetchRecords(outline(), repo.layers, k(), size()) );
+  const outline = createMemo(() => initOutlineTree(repo.layers, inputs()));
 
   const [selectedId, setSelectedId] = createSignal<number>(-1)
 
   const handleLayerChange = (index: number, field: LayerPropertyKeys, value: any) => {
-    setState('layers', index, field, value);
+    console.log(field, value)
+    setRepo('layers', index, field, value);
   }
+
+  const rows = createMemo(() => fetchRecords(outline(), repo.layers, k(), size()));
+
+  // const [rows, setRows] = createSignal<PropertyRecord[]>([]);
+
+  // createEffect(() => {
+  //   setOutline(initOutlineTree(repo.layers, inputs()));
+  // })
+
+  // createEffect(() => {
+  //   console.log(repo.layers)
+  //   setRows(fetchRecords(outline(), repo.layers, k(), size()));
+  // })
 
   return (
     <div>

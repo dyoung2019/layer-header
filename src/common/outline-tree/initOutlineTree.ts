@@ -13,7 +13,7 @@ export default function initOutlineTree(
   // initialises all layer props count
   const states = references.map(input => {
     const layer = groups[input.index]
-    const [, leaves] = doSummarize(layer.viz.schema, layer.viz.state);
+    const leaves = doSummarize(layer.is3DLayer, layer.viz.schema, layer.viz.state);
     // console.log('leaves', leaves)
     const props = initMembers();
     props.fill(leaves);
