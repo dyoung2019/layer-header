@@ -1,7 +1,8 @@
 
 import { PropertyCount } from "./doSummarize/PropertyCount";
-import { SegmentTree } from "./segment-tree/SegmentTree";
+import initSegmentTree from "./segment-tree/initSegmentTree";
+import { ISegmentTree } from "./segment-tree/ISegmentTree";
 
-export default function initMembers() {
-  return new SegmentTree<PropertyCount>((l) => l[1]);
+export default function initMembers(): ISegmentTree<PropertyCount> {
+  return initSegmentTree<PropertyCount>(member => (!!member) ? member[1] : 0);
 }

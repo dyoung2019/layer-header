@@ -1,7 +1,7 @@
-import { PropertyCount } from "./doSummarize";
-import { SegmentTree } from "./segment-tree/SegmentTree";
+import { PropertyCount } from "./doSummarize/PropertyCount";
+import { ISegmentTree } from "./segment-tree/ISegmentTree";
 
 export interface LayerProps {
   index: number,
-  props: SegmentTree<PropertyCount>;
+  props: ISegmentTree<PropertyCount>;
 }

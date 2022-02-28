@@ -1,13 +1,15 @@
 import getLeftNode from "../getLeftNode";
-import { SegmentTree } from "../outline-tree/segment-tree/SegmentTree";
 import calculateParentNode from "../getParentNode";
+import { ISegmentTree } from "../outline-tree/segment-tree/ISegmentTree";
+import getLeafLevelOfSegmentTree from "../outline-tree/segment-tree/getLeafLevelOfSegmentTree";
+import getNodeCountOfSegmentTree from "../outline-tree/segment-tree/getNodeCountOfSegmentTree";
 
-function toTreeIndex<TData>(view: SegmentTree<TData>, i: number) {
-  return view.getLeafLevel() + i;
+function toTreeIndex<TData>(view: ISegmentTree<TData>, i: number) {
+  return getLeafLevelOfSegmentTree(view) + i;
 }
 
 function setNodeValue<TData>(
-    view: SegmentTree<TData>,
+    view: ISegmentTree<TData>,
     i: number, 
     value: number,
     setLeafValue: (d: TData, v: number) => void
@@ -20,7 +22,7 @@ function setNodeValue<TData>(
   }
 }
 
-export default function treeUpdate<TData>(view: SegmentTree<TData>, i: number, value: number) {
+export default function treePending<TData>(view: ISegmentTree<TData>, i: number, value: number) {
   const output: Record<number, number> = {};
   
   // leaf index -> tree index
@@ -36,8 +38,8 @@ export default function treeUpdate<TData>(view: SegmentTree<TData>, i: number, v
 
     // const leftMatched: boolean = leftNode === currentNode;
     const otherValue: number = (leftNode === currentNode)
-      ? (view.getNodeCount(rightNode) || 0)
-      : (view.getNodeCount(leftNode) || 0);
+      ? (getNodeCountOfSegmentTree(view, rightNode) || 0)
+      : (getNodeCountOfSegmentTree(view, leftNode) || 0);
     // const rightValue: number = leftMatched
     //   ? (view.getNodeCount(rightNode) || 0)
     //   : lastValue;

@@ -3,17 +3,21 @@ import peekOn from "../peekOn";
 import pushFirstMoveOn from "../pushFirstMoveOn";
 import withinRange from "../hooks/withinRange";
 import { queueMember } from "./segment-tree/queueMember";
-import type { SegmentTree } from "./segment-tree/SegmentTree";
+import { ISegmentTree } from "./segment-tree/ISegmentTree";
+import isSegmentTreeEmpty from "./segment-tree/isSegmentTreeEmpty";
+import getNodeCountOfSegmentTree from "./segment-tree/getNodeCountOfSegmentTree";
+import isLeafNodeIndex from "./segment-tree/isLeafNodeIndex";
+import getIndexOutsideOfSegmentTree from "./segment-tree/getIndexOutsideOfSegmentTree";
 
 const getSubIndex = (minimumValue: number, offset: number) => {
   return minimumValue - offset - 1;
 }
 
 export default function memberQuery<TItem>(
-  members: SegmentTree<TItem>,
+  members: ISegmentTree<TItem>,
   k: number
 ) {
-  if (members.isEmpty()) {
+  if (isSegmentTreeEmpty(members)) {
     return 0;
   }
 
@@ -30,11 +34,11 @@ export default function memberQuery<TItem>(
   while (hasMovesLeftOn(callStack)) {
     const [index, offset] = peekOn(callStack);
     
-    const count = members.getNodeCount(index)
+    const count = getNodeCountOfSegmentTree(members, index)
     // console.log(index, offset, count)
 
     if (withinRange(minimumValue, offset, count)) {
-      if (members.isLeafNode(index)) {
+      if (isLeafNodeIndex(members, index)) {
         return [index, getSubIndex(minimumValue, offset)];
       }
 
@@ -58,6 +62,6 @@ export default function memberQuery<TItem>(
   if (validIndexFound !== null) {
     return [validIndexFound, 0];
   } else {
-    return [members.getOutsideIndex(), 0];
+    return [getIndexOutsideOfSegmentTree(members), 0];
   }
 }

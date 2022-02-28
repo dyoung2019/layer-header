@@ -3,8 +3,10 @@ import doSummarize from "./doSummarize";
 import initMembers from "./initMembers";
 import { LayerProps } from "./LayerProps";
 import { LayerReference } from "./LayerReference";
-import { SegmentTree } from "./segment-tree/SegmentTree";
+import { ISegmentTree } from "./segment-tree/ISegmentTree";
 import type { OutlineTree } from "./OutlineTree";
+import fillSegmentTree from "./segment-tree/fillSegmentTree";
+import initSegmentTree from "./segment-tree/initSegmentTree";
 
 export default function initOutlineTree(
   groups: LayerGroupInfo[], 
@@ -16,8 +18,8 @@ export default function initOutlineTree(
     const leaves = doSummarize(layer.is3DLayer, layer.viz.schema, layer.viz.state);
     // console.log('leaves', leaves)
     const props = initMembers();
-    props.fill(leaves);
-    // console.log('props', props)
+    fillSegmentTree(props, leaves);
+    console.log('props', props)
     return {
       index: input.index,
       props
@@ -25,11 +27,11 @@ export default function initOutlineTree(
   })
   // console.log('states', states)
 
-  const view = new SegmentTree<LayerProps>((a) => {
+  const view = initSegmentTree<LayerProps>((a) => {
     return (!!a && a.props.branches.length > 0)
       ? a.props.branches[0]
       : 0;
   })
-  view.fill(states);
+  fillSegmentTree(view, states);
   return view;
 }

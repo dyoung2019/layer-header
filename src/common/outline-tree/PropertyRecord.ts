@@ -5,4 +5,5 @@ export default interface PropertyRecord {
   subIndex: number;
   propIndex: number;
   depth: number;
+  isBranch: boolean;
 }

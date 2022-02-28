@@ -3,10 +3,11 @@ import { LayerProps } from "./LayerProps";
 import memberQuery from "./memberQuery";
 import { OutlineTree } from "./OutlineTree";
 import PropertyRecord from "./PropertyRecord";
+import getLeafIndexOfSegmentTree from "./segment-tree/getLeafIndexOfSegmentTree";
 
 function getTreeOffset(info: LayerProps, k: number): number {
   const query = memberQuery(info.props, k);
-  return (!!query) ? info.props.getLeafIndex(query[0]) : 0;
+  return (!!query) ? getLeafIndexOfSegmentTree(info.props, query[0]) : 0;
 }
 
 export default function fetchRecords(
@@ -67,7 +68,7 @@ export default function fetchRecords(
   if (layerPosition !== -1) {
     let count = 0;
 
-    let li = outline.getLeafIndex(layerPosition);
+    let li = getLeafIndexOfSegmentTree(outline, layerPosition);
 
     let first = true;
     const segmentSize = outline.leaves.length;
@@ -120,11 +121,12 @@ export default function fetchRecords(
             const prop: PropertyRecord = {
               layerIndex: layerIndex,
               layerOrdinal: li,
-              depth: group.depth,
+              depth: group.depth, // TODO :SHOULD CALCULATE
               // name: layer.name,
               group: group.name,
               propIndex,
               subIndex: lsi,
+              isBranch: group.queries.length > 0
             };
             //`${"=".repeat(group.depth * 2)}${group.depth === 0 ? `[${layer.name}]` : ''} Prop ${propIndex}.${lsi} - (${lp})`;
             // console.log('p', prop)

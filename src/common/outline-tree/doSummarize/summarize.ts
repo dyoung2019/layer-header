@@ -52,7 +52,7 @@ export default function summarize(
   } else {
     const node = state.nodes[index];
     const cost = parent.minimum;
-    const noOfSubProperties = getNoOfSubProperties(is3DLayer, parent.type, node.isExpanded)
+    const noOfSubProperties = getNoOfSubProperties(is3DLayer, parent.type, node.separate)
     const fullHeight = cost * noOfSubProperties;
     buildLeaves(index, fullHeight)
     return fullHeight;

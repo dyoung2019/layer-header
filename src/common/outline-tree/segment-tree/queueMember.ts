@@ -2,7 +2,9 @@ import getLeftNode from "../../getLeftNode";
 import getRightNode from "../../getRightNode";
 import pushLeftMove from "../../pushLeftMove";
 import pushRightMove from "../../pushRightMove";
-import type { SegmentTree } from "./SegmentTree";
+import getNodeCountOfSegmentTree from "./getNodeCountOfSegmentTree";
+import { ISegmentTree } from "./ISegmentTree";
+// import type { SegmentTree } from "./SegmentTree";
 // import TreeStack from "./TreeStack";
 
 function getLinks(index: number) {
@@ -13,14 +15,14 @@ function getLinks(index: number) {
 }
 
 function getValues<TItem>(
-  tree: SegmentTree<TItem>, 
+  tree: ISegmentTree<TItem>, 
   parent: number, 
   left: number, 
   right: number
 ): [boolean, number]  {
-  const parentValue = tree.getNodeCount(parent);
-  const lhsValue = tree.getNodeCount(left);
-  const rhsValue = tree.getNodeCount(right);
+  const parentValue = getNodeCountOfSegmentTree(tree, parent);
+  const lhsValue = getNodeCountOfSegmentTree(tree, left);
+  const rhsValue = getNodeCountOfSegmentTree(tree, right);
 
   // console.log('gv', parentValue, lhsValue, rhsValue)
   const isInvalid = parentValue !== (lhsValue + rhsValue);
@@ -29,7 +31,7 @@ function getValues<TItem>(
 
 export function queueMember<TItem>(
   stack: any[],
-  tree: SegmentTree<TItem>, 
+  tree: ISegmentTree<TItem>, 
   minimumValue: number,
   parent: number,
   offset: number

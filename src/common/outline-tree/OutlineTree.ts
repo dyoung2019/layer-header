@@ -1,4 +1,4 @@
-import { SegmentTree } from "./segment-tree/SegmentTree";
 import { LayerProps } from "./LayerProps";
+import { ISegmentTree } from "./segment-tree/ISegmentTree";
 
-export type OutlineTree = SegmentTree<LayerProps>;
+export type OutlineTree = ISegmentTree<LayerProps>;
